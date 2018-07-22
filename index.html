@@ -499,13 +499,6 @@
         canvas.addEventListener("mousedown", () => isDrawing = true);
         canvas.addEventListener("mouseup", () => isDrawing = false);
         canvas.addEventListener("mouseout", () => isDrawing = false);
-        /*Same for touch screens*/
-        canvas.addEventListener("touchstart", reposition);
-        canvas.addEventListener("touchstart", initialPoint);
-        canvas.addEventListener("touchmove", draw);
-        canvas.addEventListener("touchstart", () => isDrawing = true);
-        canvas.addEventListener("touchend", () => isDrawing = false);
-        canvas.addEventListener("touchcancel", () => isDrawing = false);
 
         /*Function to actually draw*/
         function draw(e) {
@@ -565,10 +558,6 @@
         canvas.addEventListener('mousedown', mouseDownLine, false);
         canvas.addEventListener('mouseup', mouseUpLine, false);
         canvas.addEventListener('mousemove', mouseMoveLine, false);
-        /*Same for touch screens*/
-        canvas.addEventListener('touchstart', mouseDownLine, false);
-        canvas.addEventListener('touchend', mouseUpLine, false);
-        canvas.addEventListener('touchmove', mouseMoveLine, false);
 
         /*When mouse is down start drawing*/
         function mouseDownLine(e) {
@@ -746,10 +735,6 @@
         canvas.addEventListener('mousedown', mouseDownRec, false);
         canvas.addEventListener('mouseup', mouseUpRec, false);
         canvas.addEventListener('mousemove', mouseMoveRec, false);
-        /*Same for touch screens*/
-        canvas.addEventListener('touchstart', mouseDownRec, false);
-        canvas.addEventListener('touchend', mouseUpRec, false);
-        canvas.addEventListener('touchmove', mouseMoveRec, false);
 
         /*When mouse is down start drawing*/
         function mouseDownRec(e) {
@@ -836,28 +821,6 @@
                 ctx.strokeStyle = '#' + document.getElementById("stroke-color").value; 
             }
         }
-        /*Same for touch screens*/
-        canvas.ontouchstart = function(e) {
-            /*Only do so if circle mode is toggled*/
-            if (!circleToggled) return;
-            /*Get invisible rectangle outline for ellipse*/
-            var rect = canvas.getBoundingClientRect();
-            x1 = e.clientX - rect.left;
-            y1 = e.clientY - rect.top;
-            /*Start dragging*/
-            drag = true;
-            /*Get starting image so that only outline is filled later*/
-            startImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            /*Get border width*/
-            if (window.innerWidth <= 660) {
-                ctx.lineWidth = document.getElementById("border-width-ft").value;
-                ctx.strokeStyle = '#' + document.getElementById("stroke-color-ft").value; 
-            }
-            else {
-                ctx.lineWidth = document.getElementById("border-width").value;
-                ctx.strokeStyle = '#' + document.getElementById("stroke-color").value; 
-            }
-        }
 
         /*Finish drawing when mouse is up*/
         canvas.onmouseup = function() {
@@ -866,29 +829,9 @@
             /*Stop dragging*/
             drag = false;
         }
-        /*Same for touch screens*/
-        canvas.ontouchend = function() {
-            /*Only do so if circle mode is toggled*/
-            if (!circleToggled) return;
-            /*Stop dragging*/
-            drag = false;
-        }
 
         /*While mouse is moving, draw placeholder outline*/
         canvas.onmousemove = function(e) {
-            /*Only do so if circle mode is toggled*/
-            if (!circleToggled) return;
-            /*And if currently dragging*/
-            if (!drag) return;
-            /*Update invisible rectangle outline for ellipse*/
-            var rect = canvas.getBoundingClientRect(),
-                x2 = e.clientX - rect.left,
-                y2 = e.clientY - rect.top;
-            /*Invoke function to draw ellipse (outline)*/
-            drawEllipse(x1, y1, x2, y2);
-        }
-        /*Same for touch screens*/
-        canvas.ontouchmove = function(e) {
             /*Only do so if circle mode is toggled*/
             if (!circleToggled) return;
             /*And if currently dragging*/
@@ -1055,23 +998,6 @@
                 a: parseInt (255)
             } :null;
         }
-
-        // Prevent scrolling when touching the canvas
-        document.body.addEventListener("touchstart", function (e) {
-            if (e.target == canvas) {
-                e.preventDefault();
-            }
-        }, false);
-        document.body.addEventListener("touchend", function (e) {
-            if (e.target == canvas) {
-                e.preventDefault();
-            }
-        }, false);
-        document.body.addEventListener("touchmove", function (e) {
-            if (e.target == canvas) {
-                e.preventDefault();
-            }
-        }, false);
 
     </script>
 </html>
