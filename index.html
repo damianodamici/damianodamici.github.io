@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Canvas</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <!--Disable autorotate on mobile devices-->
+        <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+        <!--Link Main CSS-->
+        <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
+        <!--Import Google Material Icons-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Google Fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Merriweather|Montserrat:600" rel="stylesheet">
+    </head>
+    <body onresize="handleHeaderColor()">
+        <div id="header">
+            <div class="header-wrapper" id="header-wrapper">
+                <div class="header-box instrument-options-1">
+                    <!--Brush Color-->
+                    <div class="color-box">
+                        <input class="jscolor {position:'right',
+                        borderColor:'#FFF #666 #666 #FFF',
+                        insetColor:'#666 #FFF #FFF #666',
+                        backgroundColor:'#CCC'}" name="color" id="stroke-color" value="0B0B0B">
+                    </div>
+                </div>
+                <div class="header-box instrument-options-2" id="instrument-options-2">
+                    <!--Brush Width-->
+                    <form class= "slider-box" oninput="level.value = strokeWidth.valueAsNumber">
+                        <label for="strokeWidth" id="brush-label">Size</label>
+                        <input name="strokeWidth" id="stroke-width" type="range" class="slider" min="1" max="50" value ="10">
+                        <span id="brush-value"><output for="strokeWidth" name="level">10</output>/50</span>
+                    </form>
+                </div>
+                <div class="header-box instrument-title" id="instrument-mode"> 
+                    <!--Active Instrument-->
+                    <div id="instrument-title-wrapper">
+                        <a href="#" onclick="handleOptionChange('circle')"><i class="material-icons arrow" id="arrow-left">navigate_before</i></a>
+                        <i class="material-icons" id="active-instrument-icon">brush</i>
+                        <p class="instrument-title-p">Brush Mode</p>
+                        <a href="#" onclick="handleOptionChange('line')"><i class="material-icons arrow" id="arrow-right">navigate_next</i></a>
+                    </div> 
+                </div>
+                <div class="header-box undo-redo">
+                    <!--Undo-Redo-->
+                    <div class= "ur-box">
+                        <div id="ur-wrapper">
+                            <div id="ur-pos-wrapper">
+                                <a href="#" id="undo-link" onclick="handleUndo()"><i class="material-icons ur-icon" id="undo-icon">undo</i></a>
+                                <a href="#" onclick="handleRedo()"><i class="material-icons ur-icon" id="redo-icon">redo</i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-box background-theme">
+                    <!--Background Theme-->
+                    <div class="dropdown">
+                        <button onclick="handleDropdown()" class="dropbtn">Background Theme</button>
+                        <div id="theme-dropdown" class="dropdown-content">
+                            <a href="#" id="default" onclick="handleThemeChange('default')">None</a>
+                            <a href="#" id="theme-1" onclick="handleThemeChange('canvas')">Canvas</a>
+                            <a href="#" id="theme-2" onclick="handleThemeChange('murales')">Murales</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-box save">
+                    <!--Save-->
+                    <div class= "save-box">
+                        <a href="#" class="button" id="btn-download" download="image.png"><i class="material-icons save-icon">save</i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div id="footer">
+            <div class="footer-wrapper" id="footer-wrapper">
+                <div class="header-box ft-instrument-options-1">
+                    <!--Brush Color-->
+                    <div class="color-box">
+                        <input class="jscolor {position:'right',
+                        borderColor:'#FFF #666 #666 #FFF',
+                        insetColor:'#666 #FFF #FFF #666',
+                        backgroundColor:'#CCC'}" name="color" id="stroke-color-ft" value="000">
+                    </div>
+                </div>
+                <div class="header-box ft-instrument-options-2" id="instrument-options-2">
+                    <!--Brush Width-->
+                    <form class= "slider-box" oninput="level.value = strokeWidth.valueAsNumber">
+                        <label for="strokeWidth" id="brush-label">Size</label>
+                        <input name="strokeWidth" id="stroke-width-ft" type="range" class="slider" min="1" max="50" value ="10">
+                        <span id="brush-value"><output for="strokeWidth" name="level">10</output>/50</span>
+                    </form>
+                </div>
+                <div class="header-box ft-undo-redo">
+                    <!--Undo-Redo-->
+                    <div class= "ur-box">
+                        <div id="ur-wrapper">
+                            <div id="ur-pos-wrapper">
+                                <a href="#" id="undo-link" onclick="handleUndo()"><i class="material-icons ur-icon" id="undo-icon">undo</i></a>
+                                <a href="#" onclick="handleRedo()"><i class="material-icons ur-icon" id="redo-icon">redo</i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-box ft-background-theme">
+                    <!--Background Theme-->
+                    <div class="dropdown">
+                        <button onclick="handleDropdown()" class="dropbtn">Background Theme</button>
+                        <div id="theme-dropdown-ft" class="dropdown-content">
+                            <a href="#" id="default" onclick="handleThemeChange('default')">None</a>
+                            <a href="#" id="theme-1" onclick="handleThemeChange('canvas')">Canvas</a>
+                            <a href="#" id="theme-2" onclick="handleThemeChange('murales')">Murales</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-box ft-save">
+                    <!--Save-->
+                    <div class= "save-box">
+                        <a href="#" class="button" id="btn-download-ft" download="image.png"><i class="material-icons save-icon">save</i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+
+    <!--Import Color Picker-->
+    <script src="./js/jscolor.js"></script>
+
+    <script>
+
+        /////////////
+        /*INTERFACE*/
+        /////////////
+
+        /*Save button(s)*/
+        var button = document.getElementById('btn-download');
+        button.addEventListener('click', function (e) {
+            var dataURL = canvas.toDataURL('image/png');
+            button.href = dataURL;
+        });
+        var buttonFt = document.getElementById('btn-download-ft');
+        buttonFt.addEventListener('click', function (e) {
+            var dataURL = canvas.toDataURL('image/png');
+            buttonFt.href = dataURL;
+        });
+
+        /* When the user clicks on the background theme button, 
+        toggle between hiding and showing the dropdown content */
+        function handleDropdown() {
+            if (window.innerWidth <= 660) {
+                document.getElementById("theme-dropdown-ft").classList.toggle("show");
+            }
+            else {
+                document.getElementById("theme-dropdown").classList.toggle("show");
+            }
+        }
+
+        // Close the dropdown menu if the user clicks outside of it
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        /*Set stroke as base instrument*/
+        var strokeToggled = true; 
+        var lineToggled = false;
+        var bucketToggled = false;
+        var rectangleToggled = false;
+        var circleToggled = false;
+
+        /*Function that handles drawing instrument changes*/
+        function handleOptionChange(option) {
+            if (option == "brush") {
+                /*Enable instrument and disable others*/
+                strokeToggled = true; 
+                lineToggled = false;
+                bucketToggled = false;
+                rectangleToggled = false;
+                circleToggled = false;
+                /*Change HTML to show different instrument options*/
+                document.getElementsByClassName('instrument-options-2')[0].innerHTML = 
+                    `
+                        <!--Brush Width-->
+                        <form class= "slider-box" oninput="level.value = strokeWidth.valueAsNumber">
+                            <label for="strokeWidth" id="brush-label">Size</label>
+                            <input name="strokeWidth" id="stroke-width" type="range" class="slider" min="1" max="50" value ="10">
+                            <span id="brush-value"><output for="strokeWidth" name="level">10</output>/50</span>
+                        </form>
+                    `     
+                document.getElementsByClassName('ft-instrument-options-2')[0].innerHTML = 
+                    `
+                        <!--Brush Width-->
+                        <form class= "slider-box" oninput="level.value = strokeWidth.valueAsNumber">
+                            <label for="strokeWidth" id="brush-label">Size</label>
+                            <input name="strokeWidth" id="stroke-width-ft" type="range" class="slider" min="1" max="50" value ="10">
+                            <span id="brush-value"><output for="strokeWidth" name="level">10</output>/50</span>
+                        </form>
+                    `    
+                /*Change HTML to show different instrument mode*/
+                document.getElementById("instrument-mode").innerHTML = 
+                    `
+                        <!--Active Instrument-->
+                        <div id="instrument-title-wrapper">
+                            <a href="#" onclick="handleOptionChange('circle')"><i class="material-icons arrow" id="arrow-left">navigate_before</i></a>
+                            <i class="material-icons" id="active-instrument-icon">brush</i>
+                            <p class="instrument-title-p">Brush Mode</p>
+                            <a href="#" onclick="handleOptionChange('line')"><i class="material-icons arrow" id="arrow-right">navigate_next</i></a>
+                        </div> 
+                    `   
+                /*Change CSS for instrument color change*/
+                /*Header color is also handled by separate onresize function*/
+                document.getElementById("footer-wrapper").style.background = "#BAD7F2";
+                document.getElementById("active-instrument-icon").style.background = "#BAD7F2";
+                if (window.innerWidth <= 660) {
+                    document.getElementById("header-wrapper").style.background = "#D5F0BB";
+                }
+                else {
+                    document.getElementById("header-wrapper").style.background = "#BAD7F2";
+                }
+                /*Add active instrument variable to help onresize function*/
+                activeInstrument = "br";
+            }
+            if (option == "line") {
+                /*Enable instrument and disable others*/
+                strokeToggled = false; 
+                lineToggled = true;
+                bucketToggled = false;
+                rectangleToggled = false;
+                circleToggled = false;
+                /*Change HTML to show different instrument options*/
+                document.getElementsByClassName('instrument-options-2')[0].innerHTML = 
+                    `
+                        <!--Brush Width-->
+                        <form class= "slider-box" oninput="level.value = strokeWidth.valueAsNumber">
+                            <label for="strokeWidth" id="brush-label">Size</label>
+                            <input name="strokeWidth" id="stroke-width" type="range" class="slider" min="1" max="50" value ="10">
+                            <span id="brush-value"><output for="strokeWidth" name="level">10</output>/50</span>
+                        </form>
+                    `     
+                document.getElementsByClassName('ft-instrument-options-2')[0].innerHTML = 
+                    `
+                        <!--Brush Width-->
+                        <form class= "slider-box" oninput="level.value = strokeWidth.valueAsNumber">
+                            <label for="strokeWidth" id="brush-label">Size</label>
+                            <input name="strokeWidth" id="stroke-width-ft" type="range" class="slider" min="1" max="50" value ="10">
+                            <span id="brush-value"><output for="strokeWidth" name="level">10</output>/50</span>
+                        </form>
+                    `    
+                /*Change HTML to show different instrument mode*/
+                document.getElementById("instrument-mode").innerHTML = 
+                    `
+                        <!--Active Instrument-->
+                        <div id="instrument-title-wrapper">
+                            <a href="#" onclick="handleOptionChange('brush')"><i class="material-icons arrow" id="arrow-left">navigate_before</i></a>
+                            <i class="material-icons" id="active-instrument-icon">border_color</i>
+                            <p class="instrument-title-p">Line Mode</p>
+                            <a href="#" onclick="handleOptionChange('bucket')"><i class="material-icons arrow" id="arrow-right">navigate_next</i></a>
+                        </div> 
+                    `   
+                /*Change CSS for instrument color change*/
+                /*Header color is also handled by separate onresize function*/
+                document.getElementById("footer-wrapper").style.background = "#C4D1C9";
+                document.getElementById("active-instrument-icon").style.background = "#C4D1C9";
+                if (window.innerWidth <= 660) {
+                    document.getElementById("header-wrapper").style.background = "#D5F0BB";
+                }
+                else {
+                    document.getElementById("header-wrapper").style.background = "#C4D1C9";
+                }
+                /*Add active instrument variable to help onresize function*/
+                activeInstrument = "ln";
+            }
+            /*Paint Bucket*/
+            if (option == "bucket") {
+                /*Enable instrument and disable others*/
+                strokeToggled = false; 
+                lineToggled = false;
+                bucketToggled = true;
+                rectangleToggled = false;
+                circleToggled = false;
+                /*Change HTML to show different instrument options*/
+                document.getElementsByClassName('instrument-options-2')[0].innerHTML = 
+                    `
+                        <!--Tolerance-->
+                        <form class= "slider-box" id="slider-box" oninput="level.value = bucketTolerance.valueAsNumber">
+                            <label for="bucketTolerance" id="tolerance-label">Tolerance</label>
+                            <input name="bucketTolerance" id="bucket-tolerance" type="range" class="slider" min="1" max="254" value ="10">
+                            <span id="tolerance-value"><output for="bucketTolerance" name="level">10</output>/254</span>
+                        </form>
+                    `     
+                document.getElementsByClassName('ft-instrument-options-2')[0].innerHTML = 
+                    `
+                        <!--Tolerance-->
+                        <form class= "slider-box" id="slider-box" oninput="level.value = bucketTolerance.valueAsNumber">
+                            <label for="bucketTolerance" id="tolerance-label">Tolerance</label>
+                            <input name="bucketTolerance" id="bucket-tolerance-ft" type="range" class="slider" min="1" max="254" value ="10">
+                            <span id="tolerance-value"><output for="bucketTolerance" name="level">10</output>/254</span>
+                        </form>
+                    ` 
+                /*Change HTML to show different instrument mode*/
+                document.getElementById("instrument-mode").innerHTML = 
+                    `
+                        <!--Active Instrument-->
+                        <div id="instrument-title-wrapper">
+                            <a href="#" onclick="handleOptionChange('line')"><i class="material-icons arrow" id="arrow-left">navigate_before</i></a>
+                            <i class="material-icons" id="active-instrument-icon">format_color_fill</i>
+                            <p class="instrument-title-p">Bucket Mode</p>
+                            <a href="#" onclick="handleOptionChange('rectangle')"><i class="material-icons arrow" id="arrow-right">navigate_next</i></a>
+                        </div> 
+                    `
+                /*Change CSS for slider with large label*/
+                document.getElementById("slider-box").style.display = "flex";
+                document.getElementById("slider-box").style.flexDirection = "column";
+                document.getElementById("slider-box").style.alignItems = "center";
+                document.getElementById("tolerance-label").style.marginBottom = "3px";
+                document.getElementById("tolerance-value").style.marginTop = "2px";
+                /*Change CSS for instrument color change*/
+                /*Header color is also handled by separate onresize function*/
+                document.getElementById("footer-wrapper").style.background = "#F4A7A2";
+                document.getElementById("active-instrument-icon").style.background = "#F4A7A2";
+                if (window.innerWidth <= 660) {
+                    document.getElementById("header-wrapper").style.background = "#D5F0BB";
+                }
+                else {
+                    document.getElementById("header-wrapper").style.background = "#F4A7A2";
+                }
+                /*Add active instrument variable to help onresize function*/
+                activeInstrument = "pb";
+            }
+            if (option == "rectangle") {
+                /*Enable instrument and disable others*/
+                strokeToggled = false; 
+                lineToggled = false;
+                bucketToggled = false;
+                rectangleToggled = true;
+                circleToggled = false;
+                /*Change HTML to show different instrument options*/
+                document.getElementsByClassName('instrument-options-2')[0].innerHTML = 
+                    `
+                        <!--Border Width-->
+                        <form class= "slider-box" id="slider-box" oninput="level.value = borderWidth.valueAsNumber">
+                            <label for="borderWidth" id="tolerance-label">Border Px</label>
+                            <input name="borderWidth" id="border-width" type="range" class="slider" min="1" max="25" value ="10">
+                            <span id="tolerance-value"><output for="borderWidth" name="level">10</output>/25</span>
+                        </form>
+                    `     
+                document.getElementsByClassName('ft-instrument-options-2')[0].innerHTML = 
+                    `
+                        <!--Border Width-->
+                        <form class= "slider-box" id="slider-box" oninput="level.value = borderWidth.valueAsNumber">
+                            <label for="borderWidth" id="tolerance-label">Border Px</label>
+                            <input name="borderWidth" id="border-width-ft" type="range" class="slider" min="1" max="25" value ="10">
+                            <span id="tolerance-value"><output for="borderWidth" name="level">10</output>/25</span>
+                        </form>
+                    `   
+                /*Change HTML to show different instrument mode*/
+                document.getElementById("instrument-mode").innerHTML = 
+                    `
+                        <!--Active Instrument-->
+                        <div id="instrument-title-wrapper">
+                            <a href="#" onclick="handleOptionChange('bucket')"><i class="material-icons arrow" id="arrow-left">navigate_before</i></a>
+                            <i class="material-icons" id="active-instrument-icon">add_box</i>
+                            <p class="instrument-title-p">Box Mode</p>
+                            <a href="#" onclick="handleOptionChange('circle')"><i class="material-icons arrow" id="arrow-right">navigate_next</i></a>
+                        </div> 
+                    `
+                /*Change CSS for slider with large label*/
+                document.getElementById("slider-box").style.display = "flex";
+                document.getElementById("slider-box").style.flexDirection = "column";
+                document.getElementById("slider-box").style.alignItems = "center";
+                document.getElementById("tolerance-label").style.marginBottom = "3px";
+                document.getElementById("tolerance-value").style.marginTop = "2px";
+                /*Change CSS for instrument color change*/
+                /*Header color is also handled by separate onresize function*/
+                document.getElementById("footer-wrapper").style.background = "#F0B67F";
+                document.getElementById("active-instrument-icon").style.background = "#F0B67F";
+                if (window.innerWidth <= 660) {
+                    document.getElementById("header-wrapper").style.background = "#D5F0BB";
+                }
+                else {
+                    document.getElementById("header-wrapper").style.background = "#F0B67F";
+                }
+                /*Add active instrument variable to help onresize function*/
+                activeInstrument = "rec";
+            }
+            if (option == "circle") {
+                /*Enable instrument and disable others*/
+                strokeToggled = false; 
+                lineToggled = false;
+                bucketToggled = false;
+                rectangleToggled = false;
+                circleToggled = true;
+                /*Change HTML to show different instrument options*/
+                document.getElementsByClassName('instrument-options-2')[0].innerHTML = 
+                    `
+                        <!--Border Width-->
+                        <form class= "slider-box" id="slider-box" oninput="level.value = borderWidth.valueAsNumber">
+                            <label for="borderWidth" id="tolerance-label">Border Px</label>
+                            <input name="borderWidth" id="border-width" type="range" class="slider" min="1" max="25" value ="10">
+                            <span id="tolerance-value"><output for="borderWidth" name="level">10</output>/25</span>
+                        </form>
+                    `     
+                document.getElementsByClassName('ft-instrument-options-2')[0].innerHTML = 
+                    `
+                        <!--Border Width-->
+                        <form class= "slider-box" id="slider-box" oninput="level.value = borderWidth.valueAsNumber">
+                            <label for="borderWidth" id="tolerance-label">Border Px</label>
+                            <input name="borderWidth" id="border-width-ft" type="range" class="slider" min="1" max="25" value ="10">
+                            <span id="tolerance-value"><output for="borderWidth" name="level">10</output>/25</span>
+                        </form>
+                    `   
+                /*Change HTML to show different instrument mode*/
+                document.getElementById("instrument-mode").innerHTML = 
+                    `
+                        <!--Active Instrument-->
+                        <div id="instrument-title-wrapper">
+                            <a href="#" onclick="handleOptionChange('rectangle')"><i class="material-icons arrow" id="arrow-left">navigate_before</i></a>
+                            <i class="material-icons" id="active-instrument-icon">add_circle</i>
+                            <p class="instrument-title-p">Circle Mode</p>
+                            <a href="#" onclick="handleOptionChange('brush')"><i class="material-icons arrow" id="arrow-right">navigate_next</i></a>
+                        </div> 
+                    `
+                /*Change CSS for slider with large label*/
+                document.getElementById("slider-box").style.display = "flex";
+                document.getElementById("slider-box").style.flexDirection = "column";
+                document.getElementById("slider-box").style.alignItems = "center";
+                document.getElementById("tolerance-label").style.marginBottom = "3px";
+                document.getElementById("tolerance-value").style.marginTop = "2px";
+                /*Change CSS for instrument color change*/
+                /*Header color is also handled by separate onresize function*/
+                document.getElementById("footer-wrapper").style.background = "#BBC2E2";
+                document.getElementById("active-instrument-icon").style.background = "#BBC2E2";
+                if (window.innerWidth <= 660) {
+                    document.getElementById("header-wrapper").style.background = "#D5F0BB";
+                }
+                else {
+                    document.getElementById("header-wrapper").style.background = "#BBC2E2";
+                }
+                /*Add active instrument variable to help onresize function*/
+                activeInstrument = "cir";
+            }
+        }
+
+        //////////
+        /*CANVAS*/
+        //////////
+
+        /*Get canvas and context*/
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        
+        /*Define canvas size (use CSS rather than full window)*/
+        canvas.width = document.getElementById("canvas").clientWidth;
+        canvas.height = document.getElementById("canvas").clientHeight;
+        
+        /*Fill canvas background with white img as soon as page is loaded*/
+        document.addEventListener('DOMContentLoaded', function fillCanvasInit() {
+            document.getElementById("canvas").style.backgroundImage = "url('./img/white.jpg')"
+        }, false); 
+
+        /////////
+        /*BRUSH*/
+        /////////
+
+        /*Stroke style*/
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+
+        /*Util variables for drawing function and position*/
+        let isDrawing = false;
+        let lastX;
+        let lastY;
+
+        /*Function to reposition stroke when clicking mouse*/
+        function reposition(e) {
+            [lastX, lastY] = [e.offsetX, e.offsetY] //update position
+        }
+
+        /*Listeners to start drawing and reposition starting xy*/
+        canvas.addEventListener("mousedown", reposition);
+        canvas.addEventListener("mousedown", initialPoint);
+        canvas.addEventListener("mousemove", draw);
+        canvas.addEventListener("mousedown", () => isDrawing = true);
+        canvas.addEventListener("mouseup", () => isDrawing = false);
+        canvas.addEventListener("mouseout", () => isDrawing = false);
+        /*Same for touch screens*/
+        canvas.addEventListener("touchstart", reposition);
+        canvas.addEventListener("touchstart", initialPoint);
+        canvas.addEventListener("touchmove", draw);
+        canvas.addEventListener("touchstart", () => isDrawing = true);
+        canvas.addEventListener("touchend", () => isDrawing = false);
+        canvas.addEventListener("touchcancel", () => isDrawing = false);
+
+        /*Function to actually draw*/
+        function draw(e) {
+            /*Stop if using other options*/
+            if(!strokeToggled) return; 
+            /*Stop if mouse is not clicked*/
+            if(!isDrawing) return; 
+            /*Stroke styles*/
+            if (window.innerWidth <= 660) {
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color-ft").value; 
+                ctx.lineWidth = document.getElementById("stroke-width-ft").value;
+            }
+            else {
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color").value; 
+                ctx.lineWidth = document.getElementById("stroke-width").value;
+            }
+            /*Path*/
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY); //start from
+            ctx.lineTo(e.offsetX, e.offsetY); //go to
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY] //update position
+        }
+
+        /*Function to draw point on click with same styling as stroke*/
+        function initialPoint(e) {
+            /*Save image for undo*/
+            saveImg4Undo();
+            /*Disable undo due to new action*/
+            redoArray = [];
+            redoArrayCounter = -1;
+            /*Stop if using other options*/
+            if(!strokeToggled) return; 
+            /*Stroke styles*/
+            if (window.innerWidth <= 660) {
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color-ft").value; 
+                ctx.lineWidth = document.getElementById("stroke-width-ft").value;
+            }
+            else {
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color").value; 
+                ctx.lineWidth = document.getElementById("stroke-width").value;
+            }
+            /*Path*/
+            ctx.beginPath();
+            ctx.arc(lastX,lastY,0,0,2*Math.PI);
+            ctx.stroke();
+        }
+
+        ////////
+        /*LINE*/
+        ////////
+
+        /*Utility variable*/
+        var line = {};
+
+        /*Add listeners for line drawing*/
+        canvas.addEventListener('mousedown', mouseDownLine, false);
+        canvas.addEventListener('mouseup', mouseUpLine, false);
+        canvas.addEventListener('mousemove', mouseMoveLine, false);
+        /*Same for touch screens*/
+        canvas.addEventListener('touchstart', mouseDownLine, false);
+        canvas.addEventListener('touchend', mouseUpLine, false);
+        canvas.addEventListener('touchmove', mouseMoveLine, false);
+
+        /*When mouse is down start drawing*/
+        function mouseDownLine(e) {
+            /*Only do so if line mode is toggled*/
+            if(!lineToggled) return;
+            /*Get starting image so that only outline is filled later*/
+            startImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            /*Get starting coordinates for rectangle*/
+            line.startX = e.pageX - this.offsetLeft;
+            line.startY = e.pageY - this.offsetTop;
+            /*Start dragging*/
+            drag = true;
+            /*Get stroke width and color*/
+            if (window.innerWidth <= 660) {
+                ctx.lineWidth = document.getElementById("stroke-width-ft").value;
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color-ft").value; 
+            }
+            else {
+                ctx.lineWidth = document.getElementById("stroke-width").value;
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color").value; 
+            }
+        }
+
+        /*Finish drawing when mouse is up*/
+        function mouseUpLine() {
+            /*Only do so if line mode is toggled*/
+            if(!lineToggled) return;
+            /*End dragging*/
+            drag = false;
+        }
+
+        /*While mouse is moving, draw placeholder line*/
+        function mouseMoveLine(e) {
+            /*Only do so if line mode is toggled*/
+            if(!lineToggled) return;
+            if (drag) {
+                /*Get ending coordinates for rectangle*/
+                line.endX = (e.pageX - this.offsetLeft);
+                line.endY = (e.pageY - this.offsetTop);
+                drawLine();
+            }
+        }
+
+        /*Function that actually draws placeholder outline*/
+        function drawLine() {
+            /*Only do so if line mode is toggled*/
+            if(!lineToggled) return;
+            console.log("Im drawing");
+            /*This makes sure that if outline recedes it is not drawn*/
+            ctx.putImageData(startImg, 0, 0);
+            /*This draws the placeholder line*/
+            ctx.beginPath();
+            ctx.moveTo(line.startX, line.startY);
+            ctx.lineTo(line.endX, line.endY);
+            ctx.stroke();
+        }
+
+        ////////////////
+        /*PAINT BUCKET*/
+        ////////////////
+
+        /*Event listener to use bucket on mouse click if function is toggled*/
+        canvas.addEventListener("click", bucket);
+
+        /*Bucket function, fired from above listener*/
+        function bucket(event) {
+            /*Stop if using other options*/
+            if(!bucketToggled) return; 
+
+            /*Get selected color rgba values*/
+            if (window.innerWidth <= 660) {
+                var colorFill = hexToRgb('#' + document.getElementById("stroke-color-ft").value);
+            }
+            else {
+                var colorFill = hexToRgb('#' + document.getElementById("stroke-color").value);
+            }
+
+            /*We need to grab the color value for the flood fill origin (where you click)
+            so that we can check against it in order to fill pixels with selected color*/
+            var ogColor = ctx.getImageData(lastX, lastY, 1, 1).data;
+
+            /*Fire flood fill function for origin point*/
+            if (window.innerWidth <= 660) {
+                floodFill(lastX, lastY, colorFill, ctx, canvas.width, canvas.height, document.getElementById("bucket-tolerance-ft").value);
+            }
+            else {
+                floodFill(lastX, lastY, colorFill, ctx, canvas.width, canvas.height, document.getElementById("bucket-tolerance").value);
+            }
+        }
+
+        /*Floodfill functions - MIT License - Author: Max Irwin, 2011*/
+        function floodFill(x, y, fillcolor, ctx, width, height, tolerance) {
+            /*Define variables*/
+            var img = ctx.getImageData( 0, 0, width, height);
+            var data = img.data;
+            var length = data.length;
+            var Q = [];
+            var i = (x+y*width)*4;
+            var e = i, w = i, me, mw, w2 = width*4;
+            var targetcolor = [data[i], data[i+1], data[i+2], data[i+3]];
+
+            /*Check whether pixel should be pushed to Q for coloring*/
+            if(!pixelCompare(i, targetcolor, fillcolor, data, length, tolerance)) { return false; }
+            Q.push(i);
+            while(Q.length) {
+                i = Q.pop();
+                if(pixelCompareAndSet(i, targetcolor, fillcolor, data, length, tolerance)) {
+                    e = i;
+                    w = i;
+                    mw = parseInt(i/w2)*w2; //left bound
+                    me = mw + w2; //right bound			
+                    while(mw < (w-=4) && pixelCompareAndSet(w, targetcolor, fillcolor, data, length, tolerance)); //go left until edge hit
+                    while(me > (e+=4) && pixelCompareAndSet(e, targetcolor, fillcolor, data, length, tolerance)); //go right until edge hit
+                    for(var j = w; j < e; j+=4) {
+                        if(j-w2 >= 0 && pixelCompare(j-w2, targetcolor, fillcolor, data, length, tolerance)) Q.push(j-w2); //queue y-1
+                        if(j+w2 < length && pixelCompare(j+w2, targetcolor, fillcolor, data, length, tolerance)) Q.push(j+w2); //queue y+1
+                    } 			
+                }
+            }
+            /*This "puts back" all colored pixels on image*/
+            ctx.putImageData(img, 0, 0);
+        }
+
+        /*Helper function to find pushable pixels*/
+        function pixelCompare(i, targetcolor, fillcolor, data, length, tolerance) {	
+            if (i < 0 || i >= length) return false; //out of bounds
+            if (data[i+3] === 0)  return true;  //surface is invisible
+            
+            if (
+                (targetcolor[3] === fillcolor.a) && 
+                (targetcolor[0] === fillcolor.r) && 
+                (targetcolor[1] === fillcolor.g) && 
+                (targetcolor[2] === fillcolor.b)
+            ) return false; //target is same as fill
+            
+            if (
+                (targetcolor[3] === data[i+3]) &&
+                (targetcolor[0] === data[i]  ) && 
+                (targetcolor[1] === data[i+1]) &&
+                (targetcolor[2] === data[i+2])
+            ) return true; //target matches surface 
+            
+            if (
+                Math.abs(targetcolor[3] - data[i+3]) <= (255-tolerance) &&
+                Math.abs(targetcolor[0] - data[i]  ) <= tolerance && 
+                Math.abs(targetcolor[1] - data[i+1]) <= tolerance &&
+                Math.abs(targetcolor[2] - data[i+2]) <= tolerance
+            ) return true; //target to surface within tolerance 
+            
+            return false; //no match
+        }
+
+        /*Helper function to fill the replacement color*/
+        function pixelCompareAndSet(i, targetcolor, fillcolor, data, length, tolerance) {
+            if(pixelCompare(i, targetcolor, fillcolor, data, length, tolerance)) {
+                //fill the color
+                data[i] = fillcolor.r;
+                data[i+1] = fillcolor.g;
+                data[i+2] = fillcolor.b;
+                data[i+3] = fillcolor.a;
+                return true;
+            }
+            return false;
+        }
+        
+        /////////////////////
+        /*SHAPES: RECTANGLE*/
+        /////////////////////
+    
+        /*Utility variables*/
+        var rect = {};
+        var drag = false;
+
+        /*Add listeners for rectangle drawing*/
+        canvas.addEventListener('mousedown', mouseDownRec, false);
+        canvas.addEventListener('mouseup', mouseUpRec, false);
+        canvas.addEventListener('mousemove', mouseMoveRec, false);
+        /*Same for touch screens*/
+        canvas.addEventListener('touchstart', mouseDownRec, false);
+        canvas.addEventListener('touchend', mouseUpRec, false);
+        canvas.addEventListener('touchmove', mouseMoveRec, false);
+
+        /*When mouse is down start drawing*/
+        function mouseDownRec(e) {
+            /*Only do so if rectangle mode is toggled*/
+            if(!rectangleToggled) return;
+            /*Get starting image so that only outline is filled later*/
+            startImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            /*Get starting coordinates for rectangle*/
+            rect.startX = e.pageX - this.offsetLeft;
+            rect.startY = e.pageY - this.offsetTop;
+            /*Start dragging*/
+            drag = true;
+            /*Get border width and color*/
+            if (window.innerWidth <= 660) {
+                ctx.lineWidth = document.getElementById("border-width-ft").value;
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color-ft").value; 
+            }
+            else {
+                ctx.lineWidth = document.getElementById("border-width").value;
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color").value; 
+            }
+        }
+
+        /*Finish drawing when mouse is up*/
+        function mouseUpRec() {
+            /*Only do so if rectangle mode is toggled*/
+            if(!rectangleToggled) return;
+            /*End dragging*/
+            drag = false;
+            /*Put starting image on canvas so that only outline is drawn*/
+            ctx.putImageData(startImg, 0, 0);
+            /*Draw outline*/
+            ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+        }
+
+        /*While mouse is moving, draw placeholder outline*/
+        function mouseMoveRec(e) {
+            /*Only do so if rectangle mode is toggled*/
+            if(!rectangleToggled) return;
+            if (drag) {
+                /*Get ending coordinates for rectangle*/
+                rect.w = (e.pageX - this.offsetLeft) - rect.startX;
+                rect.h = (e.pageY - this.offsetTop) - rect.startY ;
+                drawRec();
+            }
+        }
+
+        /*Function that actually draws placeholder outline*/
+        function drawRec() {
+            /*Only do so if rectangle mode is toggled*/
+            if(!rectangleToggled) return;
+            /*This makes sure that if outline recedes it is not drawn*/
+            ctx.putImageData(startImg, 0, 0);
+            /*This draws the placeholder outline*/
+            ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+        }
+
+        //////////////////
+        /*SHAPES: CIRCLE*/
+        //////////////////
+
+        /*Utility variables for ellipse coordinates*/
+        var x1, y1;
+
+        /*Function that starts drawing circle when mouse is down*/
+        canvas.onmousedown = function(e) {
+            /*Only do so if circle mode is toggled*/
+            if (!circleToggled) return;
+            /*Get invisible rectangle outline for ellipse*/
+            var rect = canvas.getBoundingClientRect();
+            x1 = e.clientX - rect.left;
+            y1 = e.clientY - rect.top;
+            /*Start dragging*/
+            drag = true;
+            /*Get starting image so that only outline is filled later*/
+            startImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            /*Get border width*/
+            if (window.innerWidth <= 660) {
+                ctx.lineWidth = document.getElementById("border-width-ft").value;
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color-ft").value; 
+            }
+            else {
+                ctx.lineWidth = document.getElementById("border-width").value;
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color").value; 
+            }
+        }
+        /*Same for touch screens*/
+        canvas.ontouchstart = function(e) {
+            /*Only do so if circle mode is toggled*/
+            if (!circleToggled) return;
+            /*Get invisible rectangle outline for ellipse*/
+            var rect = canvas.getBoundingClientRect();
+            x1 = e.clientX - rect.left;
+            y1 = e.clientY - rect.top;
+            /*Start dragging*/
+            drag = true;
+            /*Get starting image so that only outline is filled later*/
+            startImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            /*Get border width*/
+            if (window.innerWidth <= 660) {
+                ctx.lineWidth = document.getElementById("border-width-ft").value;
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color-ft").value; 
+            }
+            else {
+                ctx.lineWidth = document.getElementById("border-width").value;
+                ctx.strokeStyle = '#' + document.getElementById("stroke-color").value; 
+            }
+        }
+
+        /*Finish drawing when mouse is up*/
+        canvas.onmouseup = function() {
+            /*Only do so if circle mode is toggled*/
+            if (!circleToggled) return;
+            /*Stop dragging*/
+            drag = false;
+        }
+        /*Same for touch screens*/
+        canvas.ontouchend = function() {
+            /*Only do so if circle mode is toggled*/
+            if (!circleToggled) return;
+            /*Stop dragging*/
+            drag = false;
+        }
+
+        /*While mouse is moving, draw placeholder outline*/
+        canvas.onmousemove = function(e) {
+            /*Only do so if circle mode is toggled*/
+            if (!circleToggled) return;
+            /*And if currently dragging*/
+            if (!drag) return;
+            /*Update invisible rectangle outline for ellipse*/
+            var rect = canvas.getBoundingClientRect(),
+                x2 = e.clientX - rect.left,
+                y2 = e.clientY - rect.top;
+            /*Invoke function to draw ellipse (outline)*/
+            drawEllipse(x1, y1, x2, y2);
+        }
+        /*Same for touch screens*/
+        canvas.ontouchmove = function(e) {
+            /*Only do so if circle mode is toggled*/
+            if (!circleToggled) return;
+            /*And if currently dragging*/
+            if (!drag) return;
+            /*Update invisible rectangle outline for ellipse*/
+            var rect = canvas.getBoundingClientRect(),
+                x2 = e.clientX - rect.left,
+                y2 = e.clientY - rect.top;
+            /*Invoke function to draw ellipse (outline)*/
+            drawEllipse(x1, y1, x2, y2);
+        }
+
+        /*Function that actually draws placeholder outline AND final ellipse*/
+        function drawEllipse(x1, y1, x2, y2) {
+            /*Only do so if circle mode is toggled*/
+            if (!circleToggled) return;
+            /*Get ellipse coordinates and other utility variables*/
+            var radiusX = (x2 - x1) * 0.5,
+                radiusY = (y2 - y1) * 0.5,
+                centerX = x1 + radiusX,
+                centerY = y1 + radiusY,
+                step = 0.01,
+                a = step,
+                pi2 = Math.PI * 2 - step;
+            /*Begin drawing path*/
+            ctx.beginPath();
+            /*Handle path movement*/
+            ctx.moveTo(centerX + radiusX * Math.cos(0), centerY + radiusY * Math.sin(0));
+            /*Actually draw line between each "step"*/
+            for(; a < pi2; a += step) {
+                ctx.lineTo(centerX + radiusX * Math.cos(a), centerY + radiusY * Math.sin(a));
+            }
+            /*Put starting image on canvas so that only final outline is drawn*/
+            ctx.putImageData(startImg, 0, 0);
+            /*Close path and draw final outline*/
+            ctx.closePath();
+            ctx.stroke();
+        }
+
+        /////////////
+        /*UTILITIES*/
+        ///////////// 
+        
+        /*Helper variable to track active instrument*/
+        var activeInstrument;
+
+        /*Helper function to set header color when changing instrument and then changing screen sizes*/
+        function handleHeaderColor() {
+            /*Change color accordingly if bucket is active*/
+            if (activeInstrument == "pb") {
+                if (window.innerWidth <= 660) {
+                    document.getElementById("header-wrapper").style.background = "#D5F0BB";
+                }
+                else {
+                    document.getElementById("header-wrapper").style.background = "#F4A7A2";
+                }
+            }
+            /*Change color accordingly if brush is active*/
+            else if (activeInstrument == "br") {
+                if (window.innerWidth <= 660) {
+                    document.getElementById("header-wrapper").style.background = "#D5F0BB";
+                }
+                else {
+                    document.getElementById("header-wrapper").style.background = "#BAD7F2";
+                }
+            }
+            /*Change color accordingly if line is active*/
+            else if (activeInstrument == "ln") {
+                if (window.innerWidth <= 660) {
+                    document.getElementById("header-wrapper").style.background = "#D5F0BB";
+                }
+                else {
+                    document.getElementById("header-wrapper").style.background = "#C4D1C9";
+                }
+            }
+            /*Change color accordingly if rectangle is active*/
+            else if (activeInstrument == "rec") {
+                if (window.innerWidth <= 660) {
+                    document.getElementById("header-wrapper").style.background = "#D5F0BB";
+                }
+                else {
+                    document.getElementById("header-wrapper").style.background = "#F0B67F";
+                }
+            }
+            /*Change color accordingly if circle is active*/
+            else if (activeInstrument == "cir") {
+                if (window.innerWidth <= 660) {
+                    document.getElementById("header-wrapper").style.background = "#D5F0BB";
+                }
+                else {
+                    document.getElementById("header-wrapper").style.background = "#BBC2E2";
+                }
+            }
+        }  
+
+        /*Helper function to change background theme*/
+        function handleThemeChange (theme) {
+            /*Change color accordingly if bucket is active*/
+            if (theme == "canvas") {
+                document.getElementById("canvas").style.backgroundImage = "url('./img/canvasBg.jpg')";
+                document.getElementById("canvas").style.backgroundSize = "auto";
+            }
+            if (theme == "murales") {
+                document.getElementById("canvas").style.backgroundImage = "url('./img/cement.jpg')";
+                document.getElementById("canvas").style.backgroundRepeat = "no-repeat";
+            }
+            /*Change color accordingly if bucket is active*/
+            if (theme == "default") {
+                document.getElementById("canvas").style.backgroundImage = "url('./img/white.jpg')";
+            }
+        }  
+
+
+        /*Create array to push undo images to*/
+        var undoArray = [];
+        var undoArrayCounter = -1;
+
+        /*Save image for undo on click*/
+        function saveImg4Undo() {
+            undoImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            undoArray.push(undoImg);
+            undoArrayCounter ++;
+        }  
+
+        /*Undo handler on button click*/
+        function handleUndo() {
+            if (undoArrayCounter < 0) return;
+            saveImg4Redo();
+            ctx.putImageData(undoArray.pop(), 0, 0);
+            undoArrayCounter --;
+        }
+
+        /*Create array to push redo images to*/
+        var redoArray = [];
+        var redoArrayCounter = -1;
+
+        /*Save image for undo on click*/
+        function saveImg4Redo() {
+            redoImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            redoArray.push(redoImg);
+            redoArrayCounter ++;
+        }  
+
+        /*Undo handler on button click*/
+        function handleRedo() {
+            if (redoArrayCounter < 0) return;
+            saveImg4Undo();
+            ctx.putImageData(redoArray.pop(), 0, 0);
+            redoArrayCounter --;
+        }
+
+        /*Function to convert Hex to RGBA*/
+        function hexToRgb(hex) {
+            // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+            var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            hex = hex.replace(shorthandRegex, function(m, r, g, b) { return r + r + g + g + b + b; });
+
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16),
+                /*Opacity is fixed at 100%*/
+                a: parseInt (255)
+            } :null;
+        }
+
+        // Prevent scrolling when touching the canvas
+        document.body.addEventListener("touchstart", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, false);
+        document.body.addEventListener("touchend", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, false);
+        document.body.addEventListener("touchmove", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, false);
+
+    </script>
+</html>
